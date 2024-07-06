@@ -1,28 +1,31 @@
+#include<iostream>
 #include<SFML/Graphics.hpp>
 
 int main()
 {
     float circleSize = 50.0f;
 
-    //Creating a window
+    //Anti-aliasing
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
-    sf::RenderWindow window(sf::VideoMode(600, 800), "RPG game", sf::Style::Default, settings);
 
-    sf::CircleShape circle(circleSize);
-    circle.setFillColor(sf::Color::Green);
-    circle.setPosition(sf::Vector2f(100, 50));
+    //Creating a window
+    sf::RenderWindow window(sf::VideoMode(800, 600), "RPG game", sf::Style::Default, settings);
 
-    sf::RectangleShape rectangle(sf::Vector2f(100, 50));
-    rectangle.setFillColor(sf::Color::Blue);
-    rectangle.setPosition(sf::Vector2f(200, 200));
-    rectangle.setOrigin(rectangle.getSize()/2.0f);
-    rectangle.setRotation(45);
+    //Texture Loading
+    sf::Texture playerTexture;
+    sf::Sprite playerSprite;
 
-    sf::CircleShape triangle(80.0f, 3);
-    triangle.setFillColor(sf::Color::Red);
-    triangle.setPosition(sf::Vector2f(300, 400));
-    
+    if (playerTexture.loadFromFile("assets/Player/Textures/spritesheet.png")) {
+        playerSprite.setTexture(playerTexture);
+        playerSprite.setTextureRect(sf::IntRect(256, 128, 64, 64));
+        playerSprite.setScale(sf::Vector2f(3, 3));
+        std::cout << "Texture Loaded" << std::endl;
+    }
+    else {
+        std::cout << "Failed Loading the texture" << std::endl;
+    }
+ 
 
  
     //Creating a game loop
@@ -35,12 +38,27 @@ int main()
                 window.close();
             }
 
-            window.clear(sf::Color::Black);
-            window.draw(circle);
-            window.draw(rectangle);
-            window.draw(triangle);
-            window.display();
         }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+            sf::Vector2f position = playerSprite.getPosition();
+            playerSprite.setPosition(position + sf::Vector2f(1, 0));
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+            sf::Vector2f position = playerSprite.getPosition();
+            playerSprite.setPosition(position + sf::Vector2f(0, -1));
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+            sf::Vector2f position = playerSprite.getPosition();
+            playerSprite.setPosition(position + sf::Vector2f(-1, 0));
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+            sf::Vector2f position = playerSprite.getPosition();
+            playerSprite.setPosition(position + sf::Vector2f(0, 1));
+        }
+        window.clear(sf::Color::Black);
+        window.draw(playerSprite);
+        window.display();
     }
     return 0;
 }
