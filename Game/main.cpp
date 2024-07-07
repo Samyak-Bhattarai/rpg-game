@@ -1,28 +1,44 @@
+#include<iostream>
 #include<SFML/Graphics.hpp>
 
 int main()
 {
     float circleSize = 50.0f;
 
-    //Creating a window
+    //Anti-aliasing
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
-    sf::RenderWindow window(sf::VideoMode(600, 800), "RPG game", sf::Style::Default, settings);
 
-    sf::CircleShape circle(circleSize);
-    circle.setFillColor(sf::Color::Green);
-    circle.setPosition(sf::Vector2f(100, 50));
+    //Creating a window
+    sf::RenderWindow window(sf::VideoMode(1920, 1080), "RPG game", sf::Style::Default, settings);
 
-    sf::RectangleShape rectangle(sf::Vector2f(100, 50));
-    rectangle.setFillColor(sf::Color::Blue);
-    rectangle.setPosition(sf::Vector2f(200, 200));
-    rectangle.setOrigin(rectangle.getSize()/2.0f);
-    rectangle.setRotation(45);
+    //Texture Loading
+    sf::Texture playerTexture;
+    sf::Texture enemyTexture;
+    sf::Sprite enemySprite;
+    sf::Sprite playerSprite;
 
-    sf::CircleShape triangle(80.0f, 3);
-    triangle.setFillColor(sf::Color::Red);
-    triangle.setPosition(sf::Vector2f(300, 400));
-    
+    if (enemyTexture.loadFromFile("assets/Enemy/Textures/spritesheet.png")) {
+        enemySprite.setTexture(enemyTexture);
+        int xIndex = 1;
+        int yIndex = 2;
+        enemySprite.setTextureRect(sf::IntRect(xIndex * 64, yIndex * 64, 64, 64));
+        enemySprite.setScale(sf::Vector2f(3, 3));
+        std::cout << "Texture Loaded" << std::endl;
+    }
+
+    if (playerTexture.loadFromFile("assets/Player/Textures/spritesheet.png")) {
+        playerSprite.setTexture(playerTexture);
+        int xIndex = 0;
+        int yIndex = 0;
+        playerSprite.setTextureRect(sf::IntRect(xIndex * 64, yIndex * 64, 64, 64));
+        playerSprite.setScale(sf::Vector2f(3, 3));
+        std::cout << "Texture Loaded" << std::endl;
+    }
+    else {
+        std::cout << "Failed Loading the texture" << std::endl;
+    }
+ 
 
  
     //Creating a game loop
@@ -35,12 +51,29 @@ int main()
                 window.close();
             }
 
-            window.clear(sf::Color::Black);
-            window.draw(circle);
-            window.draw(rectangle);
-            window.draw(triangle);
-            window.display();
         }
+        sf::Vector2f position = playerSprite.getPosition();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+            
+            playerSprite.setPosition(position + sf::Vector2f(1, 0));
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+            
+            playerSprite.setPosition(position + sf::Vector2f(0, -1));
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+          
+            playerSprite.setPosition(position + sf::Vector2f(-1, 0));
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+            
+            playerSprite.setPosition(position + sf::Vector2f(0, 1));
+        }
+        window.clear(sf::Color::Black);
+        window.draw(playerSprite);
+        window.draw(enemySprite);
+        window.display();
     }
     return 0;
 }
